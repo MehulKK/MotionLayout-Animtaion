@@ -1,3 +1,4 @@
+import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.add
@@ -36,6 +37,15 @@ fun DependencyHandlerScope.`classpaths`(func: DependencyScope.() -> Unit) =
         }
     }
 
+fun DependencyHandlerScope.`implement`(func : DependencyScope.() -> Unit) =
+    DependencyScope().apply{
+    func()
+        list.forEach { dep ->
+            dependencies.add("implementation", dep.dependency, dep.config)
+        }
+
+}
+
 fun PluginDependenciesSpec.`androidApplication`(): PluginDependencySpec =
     id(Plugins.androidApplication)
 
@@ -44,3 +54,5 @@ fun PluginDependenciesSpec.`kotlinAndroid`() =
 
 fun PluginDependenciesSpec.`androidExtensions`() =
     this.kotlin(Plugins.kotlinExtensions)
+
+fun Project.`defaultFileTree`() = fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar")))
